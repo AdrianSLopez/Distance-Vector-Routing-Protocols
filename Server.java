@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Server extends Thread{ 
-    private static int port = 2000;
+    private static int port = 8080;
     private static ServerSocket serverSocket;
     private static Socket clientSocket;
     private static BufferedReader in;
@@ -131,7 +131,7 @@ public class Server extends Thread{
         |         S  E       R    R     V V    E       R    R     |
         |    SSSSSS  EEEEEE  R     R     V     EEEEEE  R     R    |
         |                                                         |
-        |                                              Port:""" + 2000 + """
+        |                                              Port:""" + port + """
           |
         =========================================================== 
          Use 'help' command to view a list of available command(s).                                                   
