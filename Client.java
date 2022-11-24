@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Client{
     private static String serverIP = "192.168.1.189";
-    private static int serverPort = 8080 ;
+    private static int serverPort = 2000 ;
     private static Socket socket;
     private static BufferedReader in;
     private static PrintWriter out;
@@ -28,7 +28,7 @@ public class Client{
                 @Override
                 public void run() {
                     while(true){
-                        msg = s.nextLine();
+                        msg = "Client: " +  s.nextLine();
                         out.println(msg);
                         out.flush();
                     }
@@ -43,7 +43,7 @@ public class Client{
                     try {
                         msg = in.readLine();
                         while(msg!=null){
-                            System.out.println("Server : "+msg);
+                            System.out.println(msg);
                             msg = in.readLine();
                         }
                         System.out.println("Server out of service");
