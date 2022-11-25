@@ -1,4 +1,9 @@
 # Distance-Vector-Routing-Protocols
 
-Run Server.java first then Client.java
-Make sure to hardcode your IP address
+Change ip and port number to run current iteration of the program
+To create another server just input a different port number.
+Edit Topology file
+
+the only data is accepted currently in the topology file:
+    server id, server ip, server port 
+        self or others
