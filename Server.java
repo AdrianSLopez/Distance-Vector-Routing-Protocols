@@ -1,19 +1,15 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Scanner;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-public class Server extends Thread{ 
-    private static int port = 8080;
-    private static ServerSocket serverSocket;
-    private static Socket clientSocket;
-    private static BufferedReader in;
-    private static PrintWriter out;
-    private static Scanner s = new Scanner(System.in);
+public class Server{ 
+    private static int port = 2000;
+    protected static String ip = "192.168.1.189";
+    protected static ServerSocket serverSocket;
+    private static Scanner s;
     private static boolean startupCmdEntered = false;
+    private static List<Client> connectedToUs = new ArrayList<Client>();
+    private static List<Node> connectionToServers = new ArrayList<Node>();
 
     public Server(int port) {
         Server.port = port;
@@ -22,66 +18,66 @@ public class Server extends Thread{
     public static void main(String[] args) {
         try {
             serverSocket = new ServerSocket(port);
+            System.out.println(introMsg());
 
-            System.out.println("SERVER STARTED");
+            // Handle user input
+            Thread userInput = new Thread(new Runnable() {
+                boolean crash = false;
 
-            clientSocket = serverSocket.accept();
-
-            out = new PrintWriter(clientSocket.getOutputStream());
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-            // To do steps
-                // Send following to clients:
-                    // Intro message along with startup command info
-                        // be able to display command info
-                        // handle user input in receive thread
-                    // Create nodes from topology.txt
-                    // Aswell with other Proj 2 requirements. Example: Update based on user input
-                    // Display and listen for user avaailable commands
-                    // Execute based on user command input
-            
-            out.println(introMsg());
-            out.flush();
-
-            // Server receives from the client from the following
-            Thread receive = new Thread(new Runnable() {
-                String msg ;
                 @Override
                 public void run() {
-                    try {
-                        msg = in.readLine();
+                    s = new Scanner(System.in);
 
-                        while(msg!=null){
-                            System.out.println(msg);
-                            out.println(executeCommand(msg.substring(8)));
-                            out.flush();
-                            msg = in.readLine();
+                    while(!crash) {
+                        String input = s.nextLine();
+                        System.out.println(executeCommand(input));
+                    }
+                }
+            });
+            userInput.start();
+            
+            // Handle incoming connections
+            Thread incomingConn = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        while(true) {
+                            Socket clientScoket = serverSocket.accept();
+                            System.out.print("Connection accepted from " + clientScoket.getLocalAddress() + ":" + clientScoket.getLocalPort());
+                            // Client is able to send and receive msgs from server that connected to us.
+                                // To handle msgs sent and received, might have to be done in the Client class.
+                            Client c = new Client(clientScoket, new BufferedReader(new InputStreamReader(clientScoket.getInputStream())), new PrintWriter(clientScoket.getOutputStream()));
+                            c.start();
+                            connectedToUs.add(c);
                         }
-
-                        System.out.println("Client disconnected");
-
-                        out.close();
-                        clientSocket.close();
-                        serverSocket.close();
-                    } catch (IOException e) {
+                    }catch(Exception e) {
                         e.printStackTrace();
                     }
                 }
             });
-            receive.start();
-
-            
-
+            incomingConn.start(); 
         } catch(IOException e) {
             e.printStackTrace();
         }
     }
 
     private static String executeCommand(String userInput) {
-        switch(userInput) {
+        // Verify user input
+        String[] input = userInput.split(" ");
+
+        switch(input[0]) {
             case "help": 
                 return (!startupCmdEntered)? help1(): help2();
             case "server":
+                if(startupCmdEntered) return "\u001B[31m" + "Invalid input" + "\u001B[0m";
+                startupCmdEntered = true;
+                // Verify parameters
+                    // file dir valid
+                    // time input valid
+                
+                
+                readTopology(input[2]);
+
                 //READ TOPOLOGY FILE AND TIME INTERVAL
                     // Create node class
                     // for every server inputted in .txt file create node object
@@ -91,32 +87,6 @@ public class Server extends Thread{
             default:
                 return "\u001B[31m" + "Invalid input" + "\u001B[0m";
         }
-    }
-
-    private static String help1() {
-        String ANSI_RESET = "\u001B[0m";
-        String ANSI_BLUE = "\u001B[34m";
-        String ANSI_GREEN = "\u001B[32m";
-        String param1 = ANSI_GREEN + " <topology file>" + ANSI_RESET;
-        String param2 = ANSI_BLUE + " <routing-update-interval> " + ANSI_RESET;
-
-        return """
-             server -t """ + param1 + " " + """
-                     -i """ + param2 + "\n\n         " + param1 + """
-                                             The topology file contains the initial topology configuration for the server, e.g., timberlake_init.txt. 
-                             """ + "         " + param2 + """
-                                          It specifies the time interval between routing updates in seconds.
-                                     """;
-    }
-
-    private static String help2() {
-        return """
-            update    .....
-            step      .....
-            packets   .....
-            display   .....
-            crash     .....
-                                     """;
     }
 
     private static String introMsg() {
@@ -137,4 +107,68 @@ public class Server extends Thread{
          Use 'help' command to view a list of available command(s).                                                   
                 """;
     }
+
+    private static String help1() {
+        String ANSI_RESET = "\u001B[0m";
+        String ANSI_BLUE = "\u001B[34m";
+        String ANSI_GREEN = "\u001B[32m";
+        String param1 = ANSI_GREEN + " <topology file>" + ANSI_RESET;
+        String param2 = ANSI_BLUE + " <routing-update-interval> " + ANSI_RESET;
+
+        return """
+            Available commands:
+                    server -t """ + param1 + " " + """
+                            -i """ + param2 + "\n                 " + param1 + """
+                                                    The topology file contains the initial topology configuration for the server, e.g., timberlake_init.txt. 
+                                    """ + "                 " + param2 + """
+                                                 It specifies the time interval between routing updates in seconds.
+                                            """;
+    }
+
+    private static String help2() {
+        return """
+            Available commands:
+                    update    .....
+                    step      .....
+                    packets   .....
+                    display   .....
+                    crash     .....
+                                     """;
+    }
+
+    private static void readTopology(String filename) {
+        //At this point file name is valid or validation can occur here
+        try {
+            File f = new File(filename);
+            Scanner fs = new Scanner(f);
+            String[] serverInfo;
+            
+            while (fs.hasNextLine()) {
+                serverInfo = fs.nextLine().split(" ");
+                if(Server.ip.equals(serverInfo[1]) && (Integer.valueOf(serverInfo[2]).intValue() == Server.port)) continue; //skips if serverinfo is itself, avoids connecting to self
+                //first two inputs
+                // # of servers
+                // # of edges neigbors
+              // n amount of server id, ip, port 
+              // x amount of cost between servers
+                Socket connToServer = new Socket(serverInfo[1], Integer.valueOf(serverInfo[2]).intValue());
+                System.out.println("(" + serverInfo[1] + ", " + serverInfo[2] + ") connected");
+                Node serverNode = new Node(Integer.valueOf(serverInfo[0]).intValue(), serverInfo[1], Integer.valueOf(serverInfo[2]).intValue(), connToServer, new BufferedReader(new InputStreamReader(connToServer.getInputStream())), new PrintWriter(connToServer.getOutputStream()));
+                serverNode.start();
+                serverNode.sendMessage("(" + ip + ", " + port + "): " + "Hello!");
+                connectionToServers.add(serverNode);
+            }
+            fs.close();
+
+        } catch (Exception e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    // private static void createTopologyTable() {
+    //     // Loop throught servers
+    //         // Either figure out to connect to them
+    //         // Create Table to be able to display
+    // }
 }
