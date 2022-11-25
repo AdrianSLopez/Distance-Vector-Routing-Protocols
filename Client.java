@@ -1,71 +1,67 @@
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.Scanner;
+import java.io.*;
+import java.net.*;
 
-public class Client{
-    private static String serverIP = "192.168.1.189";
-    private static int serverPort = 2000 ;
-    private static Socket socket;
-    private static BufferedReader in;
-    private static PrintWriter out;
-    private static Scanner s = new Scanner(System.in);
+public class Client extends Thread{
+    private Socket conn;
+    private BufferedReader msgReceiver;
+    private PrintWriter msgSender;
+    private String msg = "";
 
+    public Client(Socket conn, BufferedReader msgReceiver, PrintWriter msgSender) {
+        this.conn = conn;
+        this.msgReceiver = msgReceiver;
+        this.msgSender = msgSender;
+    }
 
-    public static void main(String[] args) {
+    @Override
+    public void run() {
         try {
-            socket = new Socket(serverIP, serverPort);
-
-            System.out.println("CLIENT RUNNING....");
-
-            out = new PrintWriter(socket.getOutputStream());
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream())); 
-
             Thread sender = new Thread(new Runnable() {
-                String msg;
                 @Override
                 public void run() {
                     while(true){
-                        msg = "Client: " +  s.nextLine();
-                        out.println(msg);
-                        out.flush();
+                        if(msg.length() == 0) continue;
+                        msgSender.println(msg);
+                        msgSender.flush();
+                        msg = "";
                     }
+
                 }
             });
             sender.start();
 
             Thread receiver = new Thread(new Runnable() {
-                String msg;
+                String msgReceived;
+
                 @Override
                 public void run() {
                     try {
-                        msg = in.readLine();
-                        while(msg!=null){
-                            System.out.println(msg);
-                            msg = in.readLine();
+                        msgReceived = msgReceiver.readLine();
+                        while(msgReceived!=null){
+                            System.out.println(msgReceived);
+                            msgReceived = msgReceiver.readLine();
                         }
                         System.out.println("Server out of service");
-                        out.close();
-                        socket.close();
+
+                        msgSender.close();
+                        msgReceiver.close();
+                        conn.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             });
-            receiver .start();
-
-
+            receiver.start();
             
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        
-
     }
 
-    
+    public void sendMessage(String msg) {
+        this.msg = msg;
+    }  
 }
 
 
