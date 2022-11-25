@@ -1,3 +1,1 @@
-Current the only data is accepted:
-    server id, server ip, server port 
-        self or others
+Server id server ip server port
