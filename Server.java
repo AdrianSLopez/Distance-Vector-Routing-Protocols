@@ -8,6 +8,7 @@ public class Server{
     protected static ServerSocket serverSocket;
     private static Scanner s;
     private static boolean startupCmdEntered = false;
+    private static int invalidUserInputCount = 1;
     private static List<Client> connectedToUs = new ArrayList<Client>();
     private static List<Node> connectionToServers = new ArrayList<Node>();
 
@@ -43,7 +44,6 @@ public class Server{
                     try{
                         while(true) {
                             Socket clientScoket = serverSocket.accept();
-                            System.out.print("Connection accepted from " + clientScoket.getLocalAddress() + ":" + clientScoket.getLocalPort());
                             // Client is able to send and receive msgs from server that connected to us.
                                 // To handle msgs sent and received, might have to be done in the Client class.
                             Client c = new Client(clientScoket, new BufferedReader(new InputStreamReader(clientScoket.getInputStream())), new PrintWriter(clientScoket.getOutputStream()));
@@ -64,12 +64,22 @@ public class Server{
     private static String executeCommand(String userInput) {
         // Verify user input
         String[] input = userInput.split(" ");
+        String helpNotif = "Use 'help' command to view a list of available command(s).";
+        String invalidNotif = "\u001B[31m" + "Invalid input." + "\u001B[0m";
 
         switch(input[0]) {
             case "help": 
                 return (!startupCmdEntered)? help1(): help2();
             case "server":
-                if(startupCmdEntered) return "\u001B[31m" + "Invalid input" + "\u001B[0m";
+                if(startupCmdEntered){
+                    invalidUserInputCount++;
+
+                    if(invalidUserInputCount%3 == 0) {
+                        return invalidNotif + " " + helpNotif;
+                    } else {
+                        return invalidNotif;
+                    }
+                } 
                 startupCmdEntered = true;
                 // Verify parameters
                     // file dir valid
@@ -85,7 +95,13 @@ public class Server{
                 return "";
             
             default:
-                return "\u001B[31m" + "Invalid input" + "\u001B[0m";
+                invalidUserInputCount++;
+
+                if(invalidUserInputCount%4== 0) {
+                    return invalidNotif + " " + helpNotif;
+                } else {
+                    return invalidNotif;
+                }
         }
     }
 
@@ -155,7 +171,7 @@ public class Server{
                 System.out.println("(" + serverInfo[1] + ", " + serverInfo[2] + ") connected");
                 Node serverNode = new Node(Integer.valueOf(serverInfo[0]).intValue(), serverInfo[1], Integer.valueOf(serverInfo[2]).intValue(), connToServer, new BufferedReader(new InputStreamReader(connToServer.getInputStream())), new PrintWriter(connToServer.getOutputStream()));
                 serverNode.start();
-                serverNode.sendMessage("(" + ip + ", " + port + "): " + "Hello!");
+                serverNode.sendMessage("(" + ip + ", " + port + "): " + "AUTOMATED MESSAGE FOR TESTING PURPOSE");
                 connectionToServers.add(serverNode);
             }
             fs.close();
