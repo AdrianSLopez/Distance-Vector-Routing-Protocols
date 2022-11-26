@@ -3,13 +3,13 @@ import java.net.*;
 import java.util.*;
 
 public class Server{ 
-    private static int port = 2000;
+    private static int port = 8080;
     protected static String ip = "192.168.1.189";
     protected static ServerSocket serverSocket;
     private static Scanner s;
     private static boolean startupCmdEntered = false;
     private static int invalidUserInputCount = 1;
-    private static List<Client> connectedToUs = new ArrayList<Client>();
+    private static List<Node> connectedToUs = new ArrayList<Node>();
     private static List<Node> connectionToServers = new ArrayList<Node>();
 
     public Server(int port) {
@@ -46,7 +46,7 @@ public class Server{
                             Socket clientScoket = serverSocket.accept();
                             // Client is able to send and receive msgs from server that connected to us.
                                 // To handle msgs sent and received, might have to be done in the Client class.
-                            Client c = new Client(clientScoket, new BufferedReader(new InputStreamReader(clientScoket.getInputStream())), new PrintWriter(clientScoket.getOutputStream()));
+                            Node c = new Node(clientScoket, new BufferedReader(new InputStreamReader(clientScoket.getInputStream())), new PrintWriter(clientScoket.getOutputStream()));
                             c.start();
                             connectedToUs.add(c);
                         }
@@ -150,6 +150,7 @@ public class Server{
                                      """;
     }
 
+    //Only server info is read from file
     private static void readTopology(String filename) {
         //At this point file name is valid or validation can occur here
         try {
@@ -160,14 +161,11 @@ public class Server{
             while (fs.hasNextLine()) {
                 serverInfo = fs.nextLine().split(" ");
                 if(Server.ip.equals(serverInfo[1]) && (Integer.valueOf(serverInfo[2]).intValue() == Server.port)) continue; //skips if serverinfo is itself, avoids connecting to self
-                //first two inputs
-                // # of servers
-                // # of edges neigbors
-              // n amount of server id, ip, port 
-              // x amount of cost between servers
+
                 Socket connToServer = new Socket(serverInfo[1], Integer.valueOf(serverInfo[2]).intValue());
                 System.out.println("(" + serverInfo[1] + ", " + serverInfo[2] + ") connected");
                 Node serverNode = new Node(Integer.valueOf(serverInfo[0]).intValue(), serverInfo[1], Integer.valueOf(serverInfo[2]).intValue(), connToServer, new BufferedReader(new InputStreamReader(connToServer.getInputStream())), new PrintWriter(connToServer.getOutputStream()));
+                
                 serverNode.start();
                 serverNode.sendMessage("(" + ip + ", " + port + "): " + "AUTOMATED MESSAGE FOR TESTING PURPOSE");
                 connectionToServers.add(serverNode);
@@ -180,9 +178,4 @@ public class Server{
         }
     }
 
-    // private static void createTopologyTable() {
-    //     // Loop throught servers
-    //         // Either figure out to connect to them
-    //         // Create Table to be able to display
-    // }
 }
