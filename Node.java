@@ -38,7 +38,6 @@ public class Node extends Thread{
                         msgSender.flush();
                         msg = "";
                     }
-
                 }
             });
             sender.start();
@@ -50,11 +49,12 @@ public class Node extends Thread{
                 public void run() {
                     try {
                         msgReceived = msgReceiver.readLine();
+                        
                         while(msgReceived!=null){
                             System.out.println(msgReceived);
                             msgReceived = msgReceiver.readLine();
                         }
-                        System.out.println("Server out of service");
+                        System.out.println(Constants.VAGUE_OUT_OF_SERVICE); // Not sure if this part of the code is reachable
 
                         msgSender.close();
                         msgReceiver.close();
