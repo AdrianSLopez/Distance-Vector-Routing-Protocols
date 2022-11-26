@@ -9,8 +9,8 @@ public class Server{
     private static Scanner s;
     private static boolean startupCmdEntered = false;
     private static int invalidUserInputCount = 1;
-    private static List<Node> connectedToUs = new ArrayList<Node>();
-    private static List<Node> connectionToServers = new ArrayList<Node>();
+    private static List<Node> connectedToUs = new ArrayList<Node>();        // Servers that connect to us
+    private static List<Node> connectionToServers = new ArrayList<Node>();  // Servers from topology file
 
     public Server(int port) {
         Server.port = port;
