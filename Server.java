@@ -55,7 +55,6 @@ public class Server{
     }
 
     private static String executeCommand(String userInput) {
-        // Verify user input
         String[] input = userInput.split(" ");
 
         switch(input[0]) {
@@ -84,7 +83,18 @@ public class Server{
                     // for every server inputted in .txt file create node object
                     // connect to each server?? I think
                 return "";
-            
+            case "update":
+                return "updating...";
+            case "step":
+                return "stepping...";
+            case "packets":
+                return "packets...";
+            case "display":
+                return "displaying...";
+            case "disable":
+                return "disabling...";
+            case "crash":
+                return "crashing...";
             default:
                 invalidUserInputCount++;
 
