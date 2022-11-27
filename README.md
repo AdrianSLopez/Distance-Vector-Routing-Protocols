@@ -1,7 +1,7 @@
 # Distance-Vector-Routing-Protocols
 
-Change ip and port number to run current iteration of the program.
-To create another server just input a different port number.
+Change ip and port number to run current iteration of the program in Constants.java
+To create another server just input a different port number in Constants.java
 Edit Topology file
 
 the only data is accepted currently in the topology file:
