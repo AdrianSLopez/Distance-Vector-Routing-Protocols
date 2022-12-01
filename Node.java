@@ -17,6 +17,12 @@ public class Node extends Thread{
         this.msgSender = msgSender;
     }
 
+    public Node(int id, String ip, int port) {
+		this.id = id;
+		this.ip = ip;
+		this.port = port;
+	}
+    
     public Node(int id, String ip, int port, Socket conn, BufferedReader msgReceiver, PrintWriter msgSender) {
         this.id = id;
         this.ip = ip;
