@@ -56,6 +56,8 @@ public class Server{
 
     private static String executeCommand(String userInput) {
         String[] input = userInput.split(" ");
+;
+
 
         switch(input[0]) {
             case "help": 
@@ -120,7 +122,10 @@ public class Server{
 
                 Socket connToServer = new Socket(serverInfo[1], Integer.valueOf(serverInfo[2]).intValue());
                 System.out.println(Constants.connectedTo(serverInfo[1], serverInfo[2]));
-                Node serverNode = new Node(Integer.valueOf(serverInfo[0]).intValue(), serverInfo[1], Integer.valueOf(serverInfo[2]).intValue(), connToServer, new BufferedReader(new InputStreamReader(connToServer.getInputStream())), new PrintWriter(connToServer.getOutputStream()));
+                Node serverNode = new Node(Integer.valueOf(serverInfo[0]).intValue(),
+                    serverInfo[1], Integer.valueOf(serverInfo[2]).intValue(),
+                    connToServer, new BufferedReader(new InputStreamReader(connToServer.getInputStream())),
+                    new PrintWriter(connToServer.getOutputStream()));
                 
                 serverNode.start();
                 serverNode.sendMessage(Constants.CONNECTION_FROM);
@@ -131,5 +136,10 @@ public class Server{
             System.out.println(Constants.VAUGE_ERROR);
             e.printStackTrace();
         }
+    }
+
+    public static void update()
+    {
+
     }
 }
