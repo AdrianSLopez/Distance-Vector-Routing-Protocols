@@ -1,0 +1,4 @@
+n amount of servers
+n amount of neigbors
+n amount of server info
+n amount of neigbor costs
