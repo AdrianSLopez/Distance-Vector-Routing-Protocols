@@ -9,6 +9,10 @@ public class Server{
     private static int invalidUserInputCount = 1;
     private static List<Node> connectedToUs = new ArrayList<Node>();        // Servers that connect to us
     private static List<Node> connectionToServers = new ArrayList<Node>();  // Servers from topology file
+    private static Map<Node, Integer> routingTable = new HashMap<>();
+    private static Set<Node> neighbors = new HashSet<Node>();
+    public static Map<Node,Node> nextHop = new HashMap<Node, Node>();
+    static int id;
 
     public static void main(String[] args) {
         try {
@@ -108,35 +112,61 @@ public class Server{
         }
     }
 
-    //Only server info is read from file
     private static void readTopology(String filename) {
         //At this point file name is valid or validation can occur here
         try {
             File f = new File(filename);
             Scanner fs = new Scanner(f);
-            String[] serverInfo;
-            
-            while (fs.hasNextLine()) {
-                serverInfo = fs.nextLine().split(" ");
-                if(Constants.IP.equals(serverInfo[1]) && (Integer.valueOf(serverInfo[2]).intValue() == Constants.PORT)) continue; //skips if serverinfo is itself, avoids connecting to self
+            String[] info;
+            int serversNum = fs.nextInt();
+            int neighborsNum = fs.nextInt();
+            fs.nextLine();
 
-                Socket connToServer = new Socket(serverInfo[1], Integer.valueOf(serverInfo[2]).intValue());
-                System.out.println(Constants.connectedTo(serverInfo[1], serverInfo[2]));
-                Node serverNode = new Node(Integer.valueOf(serverInfo[0]).intValue(),
-                    serverInfo[1], Integer.valueOf(serverInfo[2]).intValue(),
-                    connToServer, new BufferedReader(new InputStreamReader(connToServer.getInputStream())),
-                    new PrintWriter(connToServer.getOutputStream()));
+            for(int i = 0; i < serversNum; i++) {
+                info = fs.nextLine().split(" ");
+                
+                if(Constants.IP.equals(info[1]) && (Integer.valueOf(info[2]).intValue() == Constants.PORT)) {
+                    Server.id = Integer.parseInt(info[0]);
+                    continue;
+                }
+
+                Socket connToServer = new Socket(info[1], Integer.valueOf(info[2]).intValue());
+                System.out.println(Constants.connectedTo(info[1], info[2]));
+                Node serverNode = new Node(Integer.valueOf(info[0]).intValue(), info[1], Integer.valueOf(info[2]).intValue(), connToServer, new BufferedReader(new InputStreamReader(connToServer.getInputStream())), new PrintWriter(connToServer.getOutputStream()));
                 
                 serverNode.start();
                 serverNode.sendMessage(Constants.CONNECTION_FROM);
                 connectionToServers.add(serverNode);
             }
+
+            for(int i = 0; i < neighborsNum; i++) {
+                info = fs.nextLine().split(" ");
+                int fromID = Integer.parseInt(info[0]);
+                int toID = Integer.parseInt(info[1]);
+                int cost = Integer.parseInt(info[2]);
+
+                Node neigborNode = (fromID == Server.id)? getNodeById(toID): getNodeById(fromID);
+
+                routingTable.put(neigborNode, cost);
+                neighbors.add(neigborNode);
+                // nextHop.put(neigborNode, neigborNode);
+            }
+
             fs.close();
         } catch (Exception e) {
             System.out.println(Constants.VAUGE_ERROR);
             e.printStackTrace();
         }
     }
+
+    public static Node getNodeById(int id){
+		for(Node node: connectionToServers) {
+			if(node.getServerID() == id) {
+				return node;
+			}
+		}
+		return null;
+	}
 
     public static void update()
     {
