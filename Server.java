@@ -86,17 +86,17 @@ public class Server{
                     // connect to each server?? I think
                 return "";
             case "update":
-                return "updating...";
+                return "<updating> SUCCESS";
             case "step":
-                return "stepping...";
+                return "<stepping> SUCCESS";
             case "packets":
-                return "packets...";
+                return "<packets> SUCCESS";
             case "display":
-                return "displaying...";
+                return "<displaying> SUCCESS";
             case "disable":
-                return "disabling...";
+                return "<disabling> SUCCESS";
             case "crash":
-                return "crashing...";
+                return "<crashing> SUCCESS";
             default:
                 invalidUserInputCount++;
 
@@ -140,6 +140,58 @@ public class Server{
 
     public static void update()
     {
+        try{
 
+            System.out.println("RECEIVED A MESSAGE FROM SERVER <server-ID>");
+
+        }catch(Exception e){
+            System.out.println("<update> Error....");
+        }
+    }
+    public static void step()
+    {
+        try{
+
+        }catch(Exception e){
+            System.out.println("<step> Error....");
+        }
+    }
+    public static void packets()
+    {
+        try{
+
+        }catch(Exception e){
+            System.out.println("<packets> Error....");
+        }
+    }
+    public static void display()
+    {
+        try{
+
+        }catch(Exception e){
+            System.out.println("<display> Error....");
+        }
+    }
+    public static void disable()
+    {
+        try{
+
+        }catch(Exception e){
+            System.out.println("<disable> Error....");
+        }
+    }
+    public static void crash()
+    {
+        try{
+            for(int i = 0; i < connectedToUs.size(); i++){
+                connectedToUs.get(0).getConnection().close();
+            }
+            for(int i = 0; i < connectionToServers.size(); i++){
+                connectionToServers.get(0).getConnection().close();
+            }
+
+        }catch(Exception e){
+            System.out.println("<disable> Error....");
+        }
     }
 }

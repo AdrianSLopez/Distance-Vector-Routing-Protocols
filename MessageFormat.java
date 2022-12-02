@@ -8,7 +8,7 @@ public class MessageFormat implements Serializable{
     private int numFields;
     private String ipAdd;
     private int port; 
-    private List<String> routingTable = new ArrayList<String>();
+    private List<String> serverUpdates = new ArrayList<String>();
     private int cost;
 
     public MessageFormat(){};
@@ -16,8 +16,8 @@ public class MessageFormat implements Serializable{
     public MessageFormat(int id, String ipAdd, int port, int cost){
         super();
         this.id = id; 
-        this.ipAdd = ipAdd;
-        this.port = port;
+        this.ipAdd = Constants.IP;
+        this.port = Constants.PORT;
         this.cost= cost;
     }
 
@@ -29,45 +29,37 @@ public class MessageFormat implements Serializable{
     }
 
     public String getIpAddress(){
-        return ipAdd;
+        return this.ipAdd;
     }
-    public void setIpAddress(String ipAdd) {
-		this.ipAdd = ipAdd;
-	}
-
-
+    public int getPort(){
+        return port;
+    }
     public int getNumFields(){
         return numFields;
     }
     public void setNumFields(int numFields){
         this.numFields = numFields;
     }
-
-    
-    public int getPort(){
-        return port;
-    }
-    public void setPort(int port){
-        this.port = port;
-    }
-
     
     public int getCost(){
         return cost;
     }
 
-
     public void setType(int cost){
         this.cost = cost ;
     }
 
-    public List<String>getRoutingTable(){
-        return routingTable;
+    public List<String>getServerUpdates(){
+        return serverUpdates;
     }
 
-
-    public void setRoutingTabel(List<String> routingTable){
-        this.routingTable = routingTable;
+    public void setServerUpdates(List<String> serverUpdates){
+this.serverUpdates = serverUpdates;
+    }
+    public void addtoServerUpdates(String server1, String server2, int cost){
+        this.numFields++;
+        String msg = server1 + " to " +server2 +"  cost is" + Integer.toString(cost);
+        serverUpdates.add(msg);
     }
 
 }
