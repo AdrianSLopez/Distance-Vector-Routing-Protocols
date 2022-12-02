@@ -91,7 +91,6 @@ public class Node extends Thread{
     public String toString() {
         return id + " " + ip + " " + port;
     }
-
     public Socket getConnection(){
         return this.conn;
     }

@@ -61,5 +61,4 @@ this.serverUpdates = serverUpdates;
         String msg = server1 + " to " +server2 +"  cost is" + Integer.toString(cost);
         serverUpdates.add(msg);
     }
-
 }
