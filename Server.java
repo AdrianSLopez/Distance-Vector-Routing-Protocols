@@ -170,6 +170,58 @@ public class Server{
 
     public static void update()
     {
+        try{
 
+            System.out.println("RECEIVED A MESSAGE FROM SERVER <server-ID>");
+
+        }catch(Exception e){
+            System.out.println("<update> Error....");
+        }
+    }
+    public static void step()
+    {
+        try{
+
+        }catch(Exception e){
+            System.out.println("<step> Error....");
+        }
+    }
+    public static void packets()
+    {
+        try{
+
+        }catch(Exception e){
+            System.out.println("<packets> Error....");
+        }
+    }
+    public static void display()
+    {
+        try{
+
+        }catch(Exception e){
+            System.out.println("<display> Error....");
+        }
+    }
+    public static void disable()
+    {
+        try{
+
+        }catch(Exception e){
+            System.out.println("<disable> Error....");
+        }
+    }
+    public static void crash()
+    {
+        try{
+            for(int i = 0; i < connectedToUs.size(); i++){
+                connectedToUs.get(0).getConnection().close();
+            }
+            for(int i = 0; i < connectionToServers.size(); i++){
+                connectionToServers.get(0).getConnection().close();
+            }
+
+        }catch(Exception e){
+            System.out.println("<disable> Error....");
+        }
     }
 }
