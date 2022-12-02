@@ -4,29 +4,14 @@ import java.util.List;
 
 
 public class MessageFormat implements Serializable{
-    public int id;
-    private int numFields;
-    private String ipAdd;
-    private int port; 
+    private int numFields = 0;
+    private String ipAdd = Constants.IP;
+    private int port = Constants.PORT; 
     private List<String> serverUpdates = new ArrayList<String>();
-    private int cost;
- 
-    public MessageFormat(){};
 
-    public MessageFormat(int id, String ipAdd, int port, int cost){
-        super();
-        this.id = id ;
-        this.ipAdd = Constants.IP;
-        this.port = Constants.PORT;
-        this.cost= cost;
+    public MessageFormat(){
     }
 
-    public int getId() {
-        return id;
-    }
-    public void setId(int id){
-        this.id = id;
-    }
     public String getIpAddress(){
         return this.ipAdd;
     }
@@ -37,28 +22,17 @@ public class MessageFormat implements Serializable{
     public int getNumFields(){
         return numFields;
     }
-    public void setNumFields(int numFields){
-        this.numFields = numFields;
-    }
-
-    public int getCost(){
-        return cost;
-    }
-    public void setType(int cost){
-        this.cost = cost ;
-    }
 
     public List<String>getServerUpdates(){
         return serverUpdates;
     }
+    
     public void setServerUpdates(List<String> serverUpdates){
         this.serverUpdates =serverUpdates;
     }
-    public void addtoServerUpdates(String server1, String server2, int cost){
+
+    public void update(String server1, String server2, int cost){
         this.numFields++;
-        String msg = server1 + " to " +server2 +"  cost is" + Integer.toString(cost);
-        serverUpdates.add(msg);
+        serverUpdates.add(server1 + " " + server2);
     }
-
-
 }
