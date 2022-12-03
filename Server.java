@@ -60,7 +60,6 @@ public class Server{
 
     private static String executeCommand(String userInput) {
         String[] input = userInput.split(" ");
-;
 
 
         switch(input[0]) {
@@ -90,17 +89,20 @@ public class Server{
                     // connect to each server?? I think
                 return "";
             case "update":
-                return "updating...";
+                return "updating SUCCESS";
             case "step":
-                return "stepping...";
+            step(Integer.parseInt(input[4]));
+                return "stepping SUCCESS";
             case "packets":
-                return "packets...";
+                return "packets SUCCESS";
             case "display":
-                return "displaying...";
+                display();
+                return Constants.GREEN + "\n<display> SUCCESS" + Constants.RESET;
             case "disable":
-                return "disabling...";
+                return disable(Integer.parseInt(input[1]));
             case "crash":
-                return "crashing...";
+                crash();
+                return "crash SUCCESS";
             default:
                 invalidUserInputCount++;
 
@@ -170,15 +172,16 @@ public class Server{
 
     public static void update()
     {
+        
         try{
 
             System.out.println("RECEIVED A MESSAGE FROM SERVER <server-ID>");
 
         }catch(Exception e){
-            System.out.println("<update> Error....");
+            System.out.println("<update> Error: server [id] does not exist");
         }
     }
-    public static void step()
+    public static void step(int interval)
     {
         try{
 
@@ -197,31 +200,68 @@ public class Server{
     public static void display()
     {
         try{
-
+            ArrayList<Node> tableSorted = new ArrayList<Node>(routingTable.keySet());
+            Collections.sort(tableSorted);
+            Formatter fm1 = new Formatter();
+			fm1.format("%20s %15s %20s \n","Destination Server","Next Hop","Cost of Path");
+            fm1.format("%30s", "______________________________________________________________\n");
+            for(Node n : tableSorted){
+                fm1.format("%15s %18s %20s \n", "<" + id + ">", "<" + n.getServerID() + ">", "<" + routingTable.get(n) + ">");
+            }
+            System.out.println(fm1);
         }catch(Exception e){
-            System.out.println("<display> Error....");
+            System.out.println("<display> Error: Could not display all values.");
+            System.out.println(e);
         }
     }
-    public static void disable()
+    public static String disable(int id)
     {
+        String result = "";
         try{
 
-        }catch(Exception e){
-            System.out.println("<disable> Error....");
+            if (neighbors.contains(getNodeById(id))){
+                getNodeById(id).getConnection().close();
+                for(int i = 0; i < connectionToServers.size(); i++){
+                    if(connectionToServers.get(i).getServerID() == id){
+                        connectionToServers.get(i).getConnection().close();
+                    }    
+                }   
+                for(Map.Entry<Node, Integer> entry: routingTable.entrySet()){
+                    if(entry.getValue() == id){
+                        entry.getKey().getConnection().close();
+                    }
+                }
+                for(Node entry: neighbors){
+                    if(entry.getServerID() == id){
+                        entry.getConnection().close();
+                    }
+                 }
+                result = "<disable> SUCCESS";       
+            } else{
+                result = "<disable> Cannot disable " + id;
+            }
+        }catch(IOException e){
+            System.out.println(e);
         }
+        return result;
     }
     public static void crash()
     {
         try{
             for(int i = 0; i < connectedToUs.size(); i++){
-                connectedToUs.get(0).getConnection().close();
+                connectedToUs.get(i).getConnection().close();
             }
             for(int i = 0; i < connectionToServers.size(); i++){
-                connectionToServers.get(0).getConnection().close();
+                connectionToServers.get(i).getConnection().close();
             }
-
+            for(Node entry: neighbors){
+               entry.getConnection().close();
+            }
+            for(Map.Entry<Node, Integer> entry: routingTable.entrySet()){
+                routingTable.replace(entry.getKey(), entry.getValue(),null); 
+            }
         }catch(Exception e){
-            System.out.println("<disable> Error....");
+            System.out.println("<disable> Error");
         }
     }
 }
