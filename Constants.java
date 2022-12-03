@@ -4,7 +4,7 @@ public final class Constants {
 
     // SERVER INFO
     public static final String IP = ""; //Add your ip
-    public static final int PORT = 2001;
+    public static final int PORT = 2001;             // Add PORT
 
     // COLOR
     public static final String RESET = "\u001B[0m";
@@ -61,13 +61,6 @@ public final class Constants {
                   "\n " + SERVER + " -t " + SERVER_PARAM_1 + " -i " + SERVER_PARAM_2 + 
                   "\n           " + SERVER_PARAM_1 + "             File contains the initial topology configuration for the server." +
                   "\n           " + SERVER_PARAM_2 + "  Time interval between routing updates in seconds.\n";
-    // """
-    //     \t\t server -t""" + " " + SERVER_PARAM_1 + " " + """
-    //                     -i """ + " " + SERVER_PARAM_2 + "\n                 " + SERVER_PARAM_1 + """
-    //                                             The topology file contains the initial topology configuration for the server.
-    //                             """ + "                 " + SERVER_PARAM_2 + """
-    //                                          Specifies the time interval between routing updates in seconds.
-    //                                     """;
     public static final String HELP_2 = 
                 "\n Commands \t\t\t\t\t     Description\n" +
                 "==============================================================================================================="+
