@@ -41,7 +41,7 @@ public class MessageFormat implements Serializable{
 
     public void updateLinkCost(Node server,  int cost){
         this.numFields++;
-        serverUpdates.add(server.getServerIP() + "" + server.getServerPort() + " " + server.getServerID() + " " + cost);
+        serverUpdates.add(server.getServerIP() + " "  + server.getServerPort() + " " + server.getServerID() + " " + cost);
     }
 
     @Override
