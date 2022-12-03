@@ -31,6 +31,10 @@ public class MessageFormat implements Serializable{
         return numFields;
     }
 
+    public void setnumFields() {
+        this.numFields = 0;
+    }
+
     public List<String>getServerUpdates(){
         return serverUpdates;
     }

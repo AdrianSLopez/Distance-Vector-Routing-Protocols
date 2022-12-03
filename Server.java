@@ -305,6 +305,8 @@ public class Server{
         catch(IOException e){
             System.out.println("Not Valid.");
         }
+
+        System.exit(0);
     }
     private static void beginRoutingPacketSending() {
         Thread periodicUpdate = new Thread(new Runnable() {
@@ -336,7 +338,8 @@ public class Server{
                 socket.connect(InetAddress.getByName("localhost"), n.getServerPort());
                 socket.send(packet);
             }
-            
+            message.setServerUpdates(new ArrayList<String>());
+            message.setnumFields();
             socket.close();
         }catch(Exception e) {
             e.printStackTrace();
