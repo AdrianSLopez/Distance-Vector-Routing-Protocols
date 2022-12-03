@@ -1,5 +1,4 @@
-2
-1
-1 192.168.86.26 2000
-2 192.168.86.26 3000
-1 2 5
+number of server
+number of neighbor
+serverId serverIp serverPort
+serverId1 serverId2 cost
