@@ -12,6 +12,7 @@ public class Server{
     private static Map<Node, Integer> routingTable = new HashMap<>();
     private static Set<Node> neighbors = new HashSet<Node>();
     public static Map<Node,Node> nextHop = new HashMap<Node, Node>();
+    public static int packets;
     static int id;
 
     public static void main(String[] args) {
@@ -94,7 +95,7 @@ public class Server{
             step(Integer.parseInt(input[4]));
                 return "stepping SUCCESS";
             case "packets":
-                return "packets SUCCESS";
+                return "Packets: "+packets;
             case "display":
                 display();
                 return Constants.GREEN + "\n<display> SUCCESS" + Constants.RESET;

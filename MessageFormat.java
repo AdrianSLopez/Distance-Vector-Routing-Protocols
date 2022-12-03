@@ -31,13 +31,8 @@ public class MessageFormat implements Serializable{
         this.serverUpdates =serverUpdates;
     }
 
-    public void updateLinkCost(Node server1, Node server2, int cost){
+    public void updateLinkCost(Node server,  int cost){
         this.numFields++;
-
-        if(Constants.IP == server1.getServerIP()) {
-            serverUpdates.add(server2.getServerIP() + "" + server2.getServerPort() + " " + server2.getServerID() + " " + cost);
-        } else {
-            serverUpdates.add(server1.getServerIP() + " " + server1.getServerPort() + " " + server1.getServerID() + " " + cost);
-        }
+        serverUpdates.add(server.getServerIP() + "" + server.getServerPort() + " " + server.getServerID() + " " + cost);
     }
 }
