@@ -36,7 +36,22 @@ public class distance_vector_routing{
 
                     while(!crash) {
                         String input = s.nextLine();
-                        System.out.println(executeCommand(input));
+
+                        if(input.startsWith("help")){
+                            System.out.println(executeCommand(input));
+                            continue;
+                        }
+
+                        if(input.startsWith("server") && !startupCmdEntered) {
+                            System.out.print(executeCommand(input));
+                        }else if(input.startsWith("server") && startupCmdEntered) {
+                            System.out.println(executeCommand("SERVER already used"));
+                        }else if(!input.startsWith("server") && !startupCmdEntered) {
+                            System.out.println(executeCommand("COMMAND IS NOT AN AVAILABLE COMMAND"));
+                        }else {
+                            System.out.println(executeCommand(input));
+                        }
+                        
                     }
                 }
             });
@@ -97,15 +112,6 @@ public class distance_vector_routing{
             case "help": 
                return (!startupCmdEntered)? Constants.HELP_1: Constants.HELP_2;
             case "server":
-                if(startupCmdEntered){
-                    invalidUserInputCount++;
-
-                    if(invalidUserInputCount%3 == 0) {
-                        return Constants.INVALID_AND_HELP_NOTIF;
-                    } else {
-                        return Constants.INVALID_NOTIF;
-                    }
-                } 
                 startupCmdEntered = true;
                 readTopology(input[2]);
                 timerInterval = (Integer.parseInt(input[4]) * 1000);
@@ -238,7 +244,7 @@ public class distance_vector_routing{
             ArrayList<Node> tableSorted = new ArrayList<Node>(routingTable.keySet());
             Collections.sort(tableSorted);
             Formatter fm1 = new Formatter();
-			fm1.format("%20s %15s %20s \n","Destination Server","Next Hop","Cost of Path");
+			fm1.format("%20s %15s %20s \n","\nDestination Server","Next Hop","Cost of Path");
             fm1.format("%30s", "______________________________________________________________\n");
             for(Node n : tableSorted){
                 fm1.format("%15s %18s %20s \n", "<" + id + ">", "<" + n.getServerID() + ">", "<" + routingTable.get(n) + ">");
