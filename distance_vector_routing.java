@@ -12,7 +12,6 @@ public class distance_vector_routing{
     private static List<Node> connectionToServers = new ArrayList<Node>();  // Servers from topology file
     private static Map<Node, Integer> routingTable = new HashMap<>();
     private static Set<Node> neighbors = new HashSet<Node>();
-    public static Map<Node,Node> nextHop = new HashMap<Node, Node>();
     private static MessageFormat message = new MessageFormat();
     private static MessageFormat messageReceived;
     private static int timerInterval;
@@ -90,7 +89,7 @@ public class distance_vector_routing{
                             messageReceived = (MessageFormat) oi.readObject(); //Object
                             oi.close();
                             bi.close();
-                            updateRoutingTable(messageReceived.getServerUpdates());
+                            updateRoutingTable();
                             System.out.println(messageReceived);
                         }
                     } catch (Exception e) {
@@ -131,7 +130,7 @@ public class distance_vector_routing{
                 sendPacket();
                 return "Routing Update Success";
             case "packets":
-                return "Packets: "+packets;
+                return Constants.GREEN + packets + " packet(s) received." + Constants.RESET;
             case "display":
                 display();
                 return Constants.GREEN + "\n<display> SUCCESS" + Constants.RESET;
@@ -176,6 +175,7 @@ public class distance_vector_routing{
                 serverNode.start();
                 serverNode.sendMessage(Constants.CONNECTION_FROM);
                 connectionToServers.add(serverNode);
+                routingTable.put(serverNode, -1);
             }
 
             for(int i = 0; i < neighborsNum; i++) {
@@ -183,12 +183,15 @@ public class distance_vector_routing{
                 int fromID = Integer.parseInt(info[0]);
                 int toID = Integer.parseInt(info[1]);
                 int cost = Integer.parseInt(info[2]);
+                
+                if(id == fromID || id == toID) {
+                    Node neigborNode = (fromID == id)? getNodeById(toID): getNodeById(fromID);
 
-                Node neigborNode = (fromID == id)? getNodeById(toID): getNodeById(fromID);
-
-                routingTable.put(neigborNode, cost);
-                neighbors.add(neigborNode);
-                // nextHop.put(neigborNode, neigborNode);
+                    routingTable.replace(neigborNode, -1, cost);
+                    neighbors.add(neigborNode);
+                }else {
+                    continue;
+                }
             }
 
             fs.close();
@@ -206,6 +209,15 @@ public class distance_vector_routing{
 		}
 		return null;
 	}
+
+    private static Node getNodebyIPandPort(String ip, int port) {
+        for(Node n: connectionToServers) {
+            if((n.getServerIP().compareTo(ip) == 0) && (n.getServerPort() == port)) {
+                return n;
+            }
+        }
+        return null;
+    }
 
     public static void update(Node neigborNode, int cost)
     {
@@ -244,10 +256,12 @@ public class distance_vector_routing{
             ArrayList<Node> tableSorted = new ArrayList<Node>(routingTable.keySet());
             Collections.sort(tableSorted);
             Formatter fm1 = new Formatter();
+            int cost;
 			fm1.format("%20s %15s %20s \n","\nDestination Server","Next Hop","Cost of Path");
             fm1.format("%30s", "______________________________________________________________\n");
             for(Node n : tableSorted){
-                fm1.format("%15s %18s %20s \n", "<" + id + ">", "<" + n.getServerID() + ">", "<" + routingTable.get(n) + ">");
+                cost = routingTable.get(n);
+                fm1.format("%10s %20s %21s", "<" + id + ">", "<" + n.getServerID() + ">", "<" + ((cost == -1)? "infin":cost) + ">");
             }
             System.out.println(fm1);
         }catch(Exception e){
@@ -351,18 +365,16 @@ public class distance_vector_routing{
             e.printStackTrace();
         }        
     }
-    private static void updateRoutingTable(List<String> serverUpdates) {
-        if(serverUpdates.size() == 0) return;
+    private static void updateRoutingTable() {
+        if(messageReceived.getServerUpdates().size() == 0) return;
+        String[] update;
+        Node serverThatSentMessage = getNodebyIPandPort(messageReceived.getIpAddress(), messageReceived.getPort());
 
-        String[] i;
-        Node n;
+        for(String serverInfo: messageReceived.getServerUpdates()) {
+            update = serverInfo.split(" ");
 
-        for(String serverInfo: serverUpdates) {
-            i = serverInfo.split(" ");
-            n = getNodeById(Integer.parseInt(i[2]));
-
-            if(neighbors.contains(n)){
-                routingTable.replace(n, routingTable.get(n), Integer.parseInt(i[3]));
+            if(id == Integer.parseInt(update[2])) {
+                routingTable.replace(serverThatSentMessage, routingTable.get(serverThatSentMessage), Integer.parseInt(update[3]));
             }else {
                 continue;
             }
