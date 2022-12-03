@@ -1,4 +1,4 @@
-number of server
-number of neighbor
+number of servers
+number of neighbors
 serverId serverIp serverPort
 serverId1 serverId2 cost
