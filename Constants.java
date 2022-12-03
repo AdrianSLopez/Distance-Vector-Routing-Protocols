@@ -24,8 +24,8 @@ public final class Constants {
     public static final String HELP_NOTIFICATION = "Use 'help' command to view a list of available command(s).";
     public static final String INVALID_AND_HELP_NOTIF  = INVALID_NOTIF + " " + HELP_NOTIFICATION;
     public static final String CONNECTION_FROM = GREEN + "Connection from " + IP + ":" + PORT;
-    public static final String VAGUE_OUT_OF_SERVICE = "Server out of service";
-    public static final String VAUGE_ERROR = "An error occurred.";
+    public static final String VAGUE_OUT_OF_SERVICE = RED + "Server out of service" + RESET;
+    public static final String VAUGE_ERROR = RED + "An error occurred." + RESET;
     
     // SERVER RESPONSES
 
