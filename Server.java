@@ -24,6 +24,8 @@ public class Server{
             serverSocket = new ServerSocket(Constants.PORT);
             dgSocket = new DatagramSocket(Constants.PORT);
 
+            System.out.println(Constants.INTRO_MSG);
+            
             // Handle user input
             Thread userInput = new Thread(new Runnable() {
                 boolean crash = false;
