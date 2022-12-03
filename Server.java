@@ -12,13 +12,14 @@ public class Server{
     private static Map<Node, Integer> routingTable = new HashMap<>();
     private static Set<Node> neighbors = new HashSet<Node>();
     public static Map<Node,Node> nextHop = new HashMap<Node, Node>();
+    public static MessageFormat message = new MessageFormat();
     public static int packets;
     static int id;
 
     public static void main(String[] args) {
         try {
             serverSocket = new ServerSocket(Constants.PORT);
-            System.out.println(Constants.INTRO_MSG);
+//            System.out.println(Constants.INTRO_MSG);
 
             // Handle user input
             Thread userInput = new Thread(new Runnable() {
@@ -65,7 +66,7 @@ public class Server{
 
         switch(input[0]) {
             case "help": 
-                return (!startupCmdEntered)? Constants.HELP_1: Constants.HELP_2;
+ //               return (!startupCmdEntered)? Constants.HELP_1: Constants.HELP_2;
             case "server":
                 if(startupCmdEntered){
                     invalidUserInputCount++;
@@ -89,10 +90,18 @@ public class Server{
                     // for every server inputted in .txt file create node object
                     // connect to each server?? I think
                 return "";
-            case "update":
+            case "update": //update <server-id1> <server-id2> <Cost>
+                if(id == Integer.parseInt(input[1])) {
+                    update(getNodeById(Integer.parseInt(input[2])), Integer.parseInt(input[3]));
+                }else if(id == Integer.parseInt(input[2])) {
+                    update(getNodeById(Integer.parseInt(input[1])), Integer.parseInt(input[3]));
+                }
+                else{
+                    System.out.println("<update> Error: None of these servers are your server");
+                }
                 return "updating SUCCESS";
             case "step":
-            step(Integer.parseInt(input[4]));
+                step(Integer.parseInt(input[4]));
                 return "stepping SUCCESS";
             case "packets":
                 return "Packets: "+packets;
@@ -171,17 +180,31 @@ public class Server{
 		return null;
 	}
 
-    public static void update()
+    public static void update(Node neigborNode, int cost)
     {
-        
+
         try{
-
-            System.out.println("RECEIVED A MESSAGE FROM SERVER <server-ID>");
-
+            System.out.println("run");
+            if(isSeverNeighbor(neigborNode)){
+                routingTable.replace(neigborNode, routingTable.get(neigborNode), cost);
+                message.updateLinkCost(neigborNode, cost);
+                System.out.println("RECEIVED A MESSAGE FROM SERVER " + neigborNode.getServerID());
+            }
+            else{
+                System.out.println("<update> Error: Server " + neigborNode.getServerID() + " isn't your neigbor");
+            }
         }catch(Exception e){
-            System.out.println("<update> Error: server [id] does not exist");
+            System.out.println("<update> Error: server "+ neigborNode.getServerID() +" does not exist");
         }
     }
+
+    public static boolean isSeverNeighbor(Node server){
+        if (neighbors.contains(server)){
+            return true;
+        }
+        return false;
+    }
+
     public static void step(int interval)
     {
         try{
