@@ -123,7 +123,7 @@ public class Server{
                 return "updating SUCCESS";
             case "step":
                 sendPacket();
-                return "stepping SUCCESS";
+                return "Routing Update Success";
             case "packets":
                 return "Packets: "+packets;
             case "display":
