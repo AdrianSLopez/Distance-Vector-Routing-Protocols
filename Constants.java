@@ -4,7 +4,7 @@ public final class Constants {
 
     // SERVER INFO
     public static final String IP = ""; //Add your ip
-    public static final int PORT = 2000;
+    public static final int PORT = 2001;
 
     // COLOR
     public static final String RESET = "\u001B[0m";
@@ -50,18 +50,22 @@ public final class Constants {
 
     public static final String INTRO_MSG = "\t\t\tWELCOME TO\n" + SERVER_TITLE + "  " + HELP_NOTIFICATION;
     public static final String HELP_1 = """
-        \tserver -t""" + " " + SERVER_PARAM_1 + " " + """
+        \t\t server -t""" + " " + SERVER_PARAM_1 + " " + """
                         -i """ + " " + SERVER_PARAM_2 + "\n                 " + SERVER_PARAM_1 + """
                                                 The topology file contains the initial topology configuration for the server, e.g., timberlake_init.txt.
                                 """ + "                 " + SERVER_PARAM_2 + """
                                              It specifies the time interval between routing updates in seconds.
                                         """;
-    public static final String HELP_2 = """
-        \tupdate    .....
-                step      .....
-                packets   .....
-                display   .....
-                crash     .....
-                             """;
+    public static final String HELP_2 = 
+                "\t\t\t\t\t\t\t\tHELP TABLE\n" +
+                "__________________________________________________________________________________________________________________________________________"+
+                "\n" + GREEN + "update <server-ID1> <server-ID2> <Link Cost>" + RESET + "\t    Update the cost of a link." +
+                "\n"+ GREEN + "step                                                "+ RESET + "Send routing update to neighbors right away." + 
+                "\n"+ GREEN + "packets                                             "+ RESET + "Display  the  number  of  distance  vector  (packets)  this  server  has  received  since  the  last" +
+                "\n                                                    invocation of this information." +
+                "\n"+ GREEN + "display                                             "+ RESET + "Display  the current routing  table." + 
+                "\n"+ GREEN + "disable <server-ID>                                 "+ RESET + "Disable the link to  a given server" +
+                "\n"+ GREEN + "crash                                               "+ RESET + "Close all connections." 
+                ;
 
 }
