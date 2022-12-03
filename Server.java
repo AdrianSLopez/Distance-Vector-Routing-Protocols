@@ -19,7 +19,7 @@ public class Server{
     public static void main(String[] args) {
         try {
             serverSocket = new ServerSocket(Constants.PORT);
-            System.out.println(Constants.INTRO_MSG);
+//            System.out.println(Constants.INTRO_MSG);
 
             // Handle user input
             Thread userInput = new Thread(new Runnable() {
@@ -66,7 +66,7 @@ public class Server{
 
         switch(input[0]) {
             case "help": 
-                return (!startupCmdEntered)? Constants.HELP_1: Constants.HELP_2;
+ //               return (!startupCmdEntered)? Constants.HELP_1: Constants.HELP_2;
             case "server":
                 if(startupCmdEntered){
                     invalidUserInputCount++;

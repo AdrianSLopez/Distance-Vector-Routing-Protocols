@@ -4,7 +4,7 @@ public final class Constants {
 
     // SERVER INFO
     public static final String IP = "192.168.86.26"; //Add your ip
-    public static final int PORT = 3000;
+    public static final int PORT = 2000;
 
     // COLOR
     public static final String RESET = "\u001B[0m";
@@ -35,33 +35,33 @@ public final class Constants {
     }
 
     // DISPLAYS
-    private static final String SERVER_TITLE = """
-             ===========================================================
-             |                                                         |  
-             |    SSSSSS  EEEEEE  RRRRR   V       V EEEEEE  RRRRR      |
-             |    S       E       R    R   V     V  E       R    R     |
-             |    SSSSSS  EEEE    RRRRR     V   V   EEEE    RRRRR      |
-             |         S  E       R    R     V V    E       R    R     |
-             |    SSSSSS  EEEEEE  R     R     V     EEEEEE  R     R    |
-             |                                                         |
-             |                                              Port:""" + PORT + """
-               |
-             ===========================================================\n""";
+    // private static final String SERVER_TITLE = """
+    //          ===========================================================
+    //          |                                                         |
+    //          |    SSSSSS  EEEEEE  RRRRR   V       V EEEEEE  RRRRR      |
+    //          |    S       E       R    R   V     V  E       R    R     |
+    //          |    SSSSSS  EEEE    RRRRR     V   V   EEEE    RRRRR      |
+    //          |         S  E       R    R     V V    E       R    R     |
+    //          |    SSSSSS  EEEEEE  R     R     V     EEEEEE  R     R    |
+    //          |                                                         |
+    //          |                                              Port:""" + PORT + """
+    //            |
+    //          ===========================================================\n""";
 
-    public static final String INTRO_MSG = "\t\t\tWELCOME TO\n" + SERVER_TITLE + "  " + HELP_NOTIFICATION;
-    public static final String HELP_1 = """
-        \tserver -t""" + " " + SERVER_PARAM_1 + " " + """
-                        -i """ + " " + SERVER_PARAM_2 + "\n                 " + SERVER_PARAM_1 + """
-                                                The topology file contains the initial topology configuration for the server, e.g., timberlake_init.txt. 
-                                """ + "                 " + SERVER_PARAM_2 + """
-                                             It specifies the time interval between routing updates in seconds.
-                                        """;
-    public static final String HELP_2 = """
-        \tupdate    .....
-                step      .....
-                packets   .....
-                display   .....
-                crash     .....
-                             """;
+    // public static final String INTRO_MSG = "\t\t\tWELCOME TO\n" + SERVER_TITLE + "  " + HELP_NOTIFICATION;
+    // public static final String HELP_1 = """
+    //     \tserver -t""" + " " + SERVER_PARAM_1 + " " + """
+    //                     -i """ + " " + SERVER_PARAM_2 + "\n                 " + SERVER_PARAM_1 + """
+    //                                             The topology file contains the initial topology configuration for the server, e.g., timberlake_init.txt.
+    //                             """ + "                 " + SERVER_PARAM_2 + """
+    //                                          It specifies the time interval between routing updates in seconds.
+    //                                     """;
+    // public static final String HELP_2 = """
+    //     \tupdate    .....
+    //             step      .....
+    //             packets   .....
+    //             display   .....
+    //             crash     .....
+    //                          """;
 
 }
