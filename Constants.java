@@ -11,21 +11,27 @@ public final class Constants {
     public static final String RED = "\u001B[31m";
     private static final String BLUE = "\u001B[34m";
     public static final String GREEN = "\u001B[32m";
-    // private static final String YELLOW = "\u001B[33m";
-    // private static final String PURPLE = "\u001B[35m";
+    private static final String YELLOW = "\u001B[33m";
+    private static final String PURPLE = "\u001B[35m";
     // private static final String CYAN = "\u001B[36m";
     // private static final String WHITE = "\u001B[37m";
     // private static final String BLACK = "\u001B[30m";
     
     // TEXT
-    public static final String SERVER_PARAM_1 = GREEN + "<topology file>" + RESET;
-    public static final String SERVER_PARAM_2 = BLUE + "<routing-update-interval> " + RESET;
+    public static final String SERVER_PARAM_1 = BLUE + "<topology file>" + RESET;
+    public static final String SERVER_PARAM_2 = YELLOW + "<routing-update-interval> " + RESET;
     public static final String INVALID_NOTIF = RED + "Invalid input." + RESET;
     public static final String HELP_NOTIFICATION = "Use 'help' command to view a list of available command(s).";
     public static final String INVALID_AND_HELP_NOTIF  = INVALID_NOTIF + " " + HELP_NOTIFICATION;
-    public static final String CONNECTION_FROM = GREEN + "Connection from " + IP + ":" + PORT;
+    public static final String CONNECTION_FROM = GREEN + "Connection from " + IP + ":" + PORT + RESET;
     public static final String VAGUE_OUT_OF_SERVICE = RED + "Server out of service" + RESET;
     public static final String VAUGE_ERROR = RED + "An error occurred." + RESET;
+
+    private static final String SERVER = GREEN + "server" + RESET;
+    private static final String SERVER_ID = BLUE + "<server-ID>" + RESET;
+    private static final String SERVER_ID_1 = BLUE + "<server-ID1>" + RESET;
+    private static final String SERVER_ID_2 = YELLOW + "<server-ID2>" + RESET;
+    private static final String LINK_COST = PURPLE + "<Link Cost>" + RESET;
     
     // SERVER RESPONSES
 
@@ -49,23 +55,28 @@ public final class Constants {
              ===========================================================\n""";
 
     public static final String INTRO_MSG = "\t\t\tWELCOME TO\n" + SERVER_TITLE + "  " + HELP_NOTIFICATION;
-    public static final String HELP_1 = """
-        \t\t server -t""" + " " + SERVER_PARAM_1 + " " + """
-                        -i """ + " " + SERVER_PARAM_2 + "\n                 " + SERVER_PARAM_1 + """
-                                                The topology file contains the initial topology configuration for the server, e.g., timberlake_init.txt.
-                                """ + "                 " + SERVER_PARAM_2 + """
-                                             It specifies the time interval between routing updates in seconds.
-                                        """;
+    public static final String HELP_1 =
+                  " Command       " +
+                  "\n========================================================================================================" +
+                  "\n " + SERVER + " -t " + SERVER_PARAM_1 + " -i " + SERVER_PARAM_2 + 
+                  "\n           " + SERVER_PARAM_1 + "             File contains the initial topology configuration for the server." +
+                  "\n           " + SERVER_PARAM_2 + "  Time interval between routing updates in seconds.\n";
+    // """
+    //     \t\t server -t""" + " " + SERVER_PARAM_1 + " " + """
+    //                     -i """ + " " + SERVER_PARAM_2 + "\n                 " + SERVER_PARAM_1 + """
+    //                                             The topology file contains the initial topology configuration for the server.
+    //                             """ + "                 " + SERVER_PARAM_2 + """
+    //                                          Specifies the time interval between routing updates in seconds.
+    //                                     """;
     public static final String HELP_2 = 
-                "\t\t\t\t\t\t\t\tHELP TABLE\n" +
-                "__________________________________________________________________________________________________________________________________________"+
-                "\n" + GREEN + "update <server-ID1> <server-ID2> <Link Cost>" + RESET + "\t    Update the cost of a link." +
-                "\n"+ GREEN + "step                                                "+ RESET + "Send routing update to neighbors right away." + 
-                "\n"+ GREEN + "packets                                             "+ RESET + "Display  the  number  of  distance  vector  (packets)  this  server  has  received  since  the  last" +
-                "\n                                                    invocation of this information." +
-                "\n"+ GREEN + "display                                             "+ RESET + "Display  the current routing  table." + 
-                "\n"+ GREEN + "disable <server-ID>                                 "+ RESET + "Disable the link to  a given server" +
-                "\n"+ GREEN + "crash                                               "+ RESET + "Close all connections." 
+                " Commands \t\t\t\t\t     Description\n" +
+                "==============================================================================================================="+
+                "\n" + GREEN + " update " + RESET + SERVER_ID_1 + " " + SERVER_ID_2 + " " + LINK_COST + "\t     Update " + LINK_COST + " between " + SERVER_ID_1 + " and " + SERVER_ID_2 + "." +
+                "\n"+ GREEN + " step                                                "+ RESET + "Send routing update to neighbors right away." + 
+                "\n"+ GREEN + " Packets                                             "+ RESET + "Display the number of packets the server has received." +
+                "\n"+ GREEN + " display                                             "+ RESET + "Display the current routing  table." + 
+                "\n"+ GREEN + " disable " + RESET + SERVER_ID + "                                 "+ "Disable Server with id " + SERVER_ID + "." +
+                "\n"+ GREEN + " crash                                               "+ RESET + "Close all connections.\n" 
                 ;
 
 }
