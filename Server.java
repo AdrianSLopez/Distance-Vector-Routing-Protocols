@@ -227,8 +227,9 @@ public class Server{
                     }    
                 }   
                 for(Map.Entry<Node, Integer> entry: routingTable.entrySet()){
-                    if(entry.getValue() == id){
+                    if(entry.getKey().getServerID() == id){
                         entry.getKey().getConnection().close();
+                        routingTable.remove(entry.getKey());
                     }
                 }
                 for(Node entry: neighbors){
@@ -240,8 +241,11 @@ public class Server{
             } else{
                 result = "<disable> Cannot disable " + id;
             }
-        }catch(IOException e){
-            System.out.println(e);
+        }catch(ConcurrentModificationException e){
+            System.out.println("Socket closed.");
+        }
+        catch(IOException e){
+            System.out.println("Not Valid.");
         }
         return result;
     }
@@ -260,8 +264,11 @@ public class Server{
             for(Map.Entry<Node, Integer> entry: routingTable.entrySet()){
                 routingTable.replace(entry.getKey(), entry.getValue(),null); 
             }
-        }catch(Exception e){
-            System.out.println("<disable> Error");
+        }catch(ConcurrentModificationException e){
+            System.out.println("<disable> Error: Socket Closed");
+        }
+        catch(IOException e){
+            System.out.println("Not Valid.");
         }
     }
 }
