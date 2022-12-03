@@ -56,7 +56,7 @@ public final class Constants {
 
     public static final String INTRO_MSG = "\t\t\tWELCOME TO\n" + SERVER_TITLE + "  " + HELP_NOTIFICATION;
     public static final String HELP_1 =
-                  " Command       " +
+                  "\n Command       " +
                   "\n========================================================================================================" +
                   "\n " + SERVER + " -t " + SERVER_PARAM_1 + " -i " + SERVER_PARAM_2 + 
                   "\n           " + SERVER_PARAM_1 + "             File contains the initial topology configuration for the server." +
@@ -69,7 +69,7 @@ public final class Constants {
     //                                          Specifies the time interval between routing updates in seconds.
     //                                     """;
     public static final String HELP_2 = 
-                " Commands \t\t\t\t\t     Description\n" +
+                "\n Commands \t\t\t\t\t     Description\n" +
                 "==============================================================================================================="+
                 "\n" + GREEN + " update " + RESET + SERVER_ID_1 + " " + SERVER_ID_2 + " " + LINK_COST + "\t     Update " + LINK_COST + " between " + SERVER_ID_1 + " and " + SERVER_ID_2 + "." +
                 "\n"+ GREEN + " step                                                "+ RESET + "Send routing update to neighbors right away." + 
