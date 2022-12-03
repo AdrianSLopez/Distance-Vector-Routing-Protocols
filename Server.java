@@ -3,7 +3,8 @@ import java.net.*;
 import java.util.*;
 
 public class Server{ 
-    protected static ServerSocket serverSocket;
+    private static ServerSocket serverSocket;
+    private static DatagramSocket dgSocket;
     private static Scanner s;
     private static boolean startupCmdEntered = false;
     private static int invalidUserInputCount = 1;
@@ -12,14 +13,16 @@ public class Server{
     private static Map<Node, Integer> routingTable = new HashMap<>();
     private static Set<Node> neighbors = new HashSet<Node>();
     public static Map<Node,Node> nextHop = new HashMap<Node, Node>();
-    public static MessageFormat message = new MessageFormat();
+    private static MessageFormat message = new MessageFormat();
+    private static MessageFormat messageReceived;
+    private static int timerInterval;
+    private static int id;
     public static int packets;
-    static int id;
-
+    
     public static void main(String[] args) {
         try {
             serverSocket = new ServerSocket(Constants.PORT);
-//            System.out.println(Constants.INTRO_MSG);
+            dgSocket = new DatagramSocket(Constants.PORT);
 
             // Handle user input
             Thread userInput = new Thread(new Runnable() {
@@ -55,6 +58,30 @@ public class Server{
                 }
             });
             incomingConn.start(); 
+
+            Thread receivePackets = new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        DatagramPacket packetHolder = new DatagramPacket(new byte[254], 254);
+                        ByteArrayInputStream bi;
+                        ObjectInputStream oi;
+                        while(true) {
+                            dgSocket.receive(packetHolder);
+                            bi = new ByteArrayInputStream(packetHolder.getData());
+                            oi = new ObjectInputStream(bi);
+                            Server.messageReceived = (MessageFormat) oi.readObject(); //Object
+                            oi.close();
+                            bi.close();
+                            updateRoutingTable(messageReceived.getServerUpdates());
+                            System.out.println(Server.messageReceived);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            receivePackets.start();
+           
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -63,10 +90,9 @@ public class Server{
     private static String executeCommand(String userInput) {
         String[] input = userInput.split(" ");
 
-
         switch(input[0]) {
             case "help": 
- //               return (!startupCmdEntered)? Constants.HELP_1: Constants.HELP_2;
+               return (!startupCmdEntered)? Constants.HELP_1: Constants.HELP_2;
             case "server":
                 if(startupCmdEntered){
                     invalidUserInputCount++;
@@ -78,17 +104,9 @@ public class Server{
                     }
                 } 
                 startupCmdEntered = true;
-                // Verify parameters
-                    // file dir valid
-                    // time input valid
-                
-                
                 readTopology(input[2]);
-
-                //READ TOPOLOGY FILE AND TIME INTERVAL
-                    // Create node class
-                    // for every server inputted in .txt file create node object
-                    // connect to each server?? I think
+                timerInterval = (Integer.parseInt(input[4]) * 1000);
+                beginRoutingPacketSending();
                 return "";
             case "update": //update <server-id1> <server-id2> <Cost>
                 if(id == Integer.parseInt(input[1])) {
@@ -101,7 +119,7 @@ public class Server{
                 }
                 return "updating SUCCESS";
             case "step":
-                step(Integer.parseInt(input[4]));
+                sendPacket();
                 return "stepping SUCCESS";
             case "packets":
                 return "Packets: "+packets;
@@ -205,14 +223,6 @@ public class Server{
         return false;
     }
 
-    public static void step(int interval)
-    {
-        try{
-
-        }catch(Exception e){
-            System.out.println("<step> Error....");
-        }
-    }
     public static void packets()
     {
         try{
@@ -293,6 +303,59 @@ public class Server{
         }
         catch(IOException e){
             System.out.println("Not Valid.");
+        }
+    }
+    private static void beginRoutingPacketSending() {
+        Thread periodicUpdate = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    try{
+                        Thread.sleep(Server.timerInterval);
+                        sendPacket();
+                    }catch(InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        periodicUpdate.start();
+    }
+    private static void sendPacket() {
+        try {
+            DatagramSocket socket = new DatagramSocket();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(message);
+            oos.flush();
+            byte [] data = bos.toByteArray();
+            DatagramPacket packet = new DatagramPacket(data, data.length);
+
+            for(Node n: neighbors) {
+                socket.connect(InetAddress.getByName("localhost"), n.getServerPort());
+                socket.send(packet);
+            }
+            
+            socket.close();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }        
+    }
+    private static void updateRoutingTable(List<String> serverUpdates) {
+        if(serverUpdates.size() == 0) return;
+
+        String[] i;
+        Node n;
+
+        for(String serverInfo: serverUpdates) {
+            i = serverInfo.split(" ");
+            n = getNodeById(Integer.parseInt(i[2]));
+
+            if(neighbors.contains(n)){
+                routingTable.replace(n, routingTable.get(n), Integer.parseInt(i[3]));
+            }else {
+                continue;
+            }
         }
     }
 }
