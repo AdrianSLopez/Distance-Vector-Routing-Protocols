@@ -25,7 +25,7 @@ public class Server{
             dgSocket = new DatagramSocket(Constants.PORT);
 
             System.out.println(Constants.INTRO_MSG);
-            
+
             // Handle user input
             Thread userInput = new Thread(new Runnable() {
                 boolean crash = false;
@@ -205,11 +205,9 @@ public class Server{
     {
 
         try{
-            System.out.println("run");
             if(isSeverNeighbor(neigborNode)){
                 routingTable.replace(neigborNode, routingTable.get(neigborNode), cost);
                 message.updateLinkCost(neigborNode, cost);
-                System.out.println("RECEIVED A MESSAGE FROM SERVER " + neigborNode.getServerID());
             }
             else{
                 System.out.println("<update> Error: Server " + neigborNode.getServerID() + " isn't your neigbor");
