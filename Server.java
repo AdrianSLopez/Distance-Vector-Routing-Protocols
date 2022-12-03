@@ -245,7 +245,7 @@ public class Server{
             System.out.println("Socket closed.");
         }
         catch(IOException e){
-            System.out.println("Not Valid.");
+            System.out.println("Invalid.");
         }
         return result;
     }

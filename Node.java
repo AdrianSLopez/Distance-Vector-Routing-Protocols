@@ -60,7 +60,6 @@ public class Node extends Thread implements Comparable<Node>{
                         msgReceiver.close();
                         conn.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
                     }
                 }
             });
