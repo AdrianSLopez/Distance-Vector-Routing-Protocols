@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class Server{ 
+public class distance_vector_routing{ 
     private static ServerSocket serverSocket;
     private static DatagramSocket dgSocket;
     private static Scanner s;
@@ -72,11 +72,11 @@ public class Server{
                             packets++;
                             bi = new ByteArrayInputStream(packetHolder.getData());
                             oi = new ObjectInputStream(bi);
-                            Server.messageReceived = (MessageFormat) oi.readObject(); //Object
+                            messageReceived = (MessageFormat) oi.readObject(); //Object
                             oi.close();
                             bi.close();
                             updateRoutingTable(messageReceived.getServerUpdates());
-                            System.out.println(Server.messageReceived);
+                            System.out.println(messageReceived);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -159,7 +159,7 @@ public class Server{
                 info = fs.nextLine().split(" ");
                 
                 if(Constants.IP.equals(info[1]) && (Integer.valueOf(info[2]).intValue() == Constants.PORT)) {
-                    Server.id = Integer.parseInt(info[0]);
+                    id = Integer.parseInt(info[0]);
                     continue;
                 }
 
@@ -178,7 +178,7 @@ public class Server{
                 int toID = Integer.parseInt(info[1]);
                 int cost = Integer.parseInt(info[2]);
 
-                Node neigborNode = (fromID == Server.id)? getNodeById(toID): getNodeById(fromID);
+                Node neigborNode = (fromID == id)? getNodeById(toID): getNodeById(fromID);
 
                 routingTable.put(neigborNode, cost);
                 neighbors.add(neigborNode);
@@ -314,7 +314,7 @@ public class Server{
             public void run() {
                 while(true) {
                     try{
-                        Thread.sleep(Server.timerInterval);
+                        Thread.sleep(timerInterval);
                         sendPacket();
                     }catch(InterruptedException e) {
                         e.printStackTrace();
