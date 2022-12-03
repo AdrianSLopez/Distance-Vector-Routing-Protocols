@@ -67,6 +67,7 @@ public class Server{
                         ObjectInputStream oi;
                         while(true) {
                             dgSocket.receive(packetHolder);
+                            packets++;
                             bi = new ByteArrayInputStream(packetHolder.getData());
                             oi = new ObjectInputStream(bi);
                             Server.messageReceived = (MessageFormat) oi.readObject(); //Object
