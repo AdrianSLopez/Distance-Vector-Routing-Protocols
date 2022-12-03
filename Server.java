@@ -91,7 +91,14 @@ public class Server{
                     // connect to each server?? I think
                 return "";
             case "update": //update <server-id1> <server-id2> <Cost>
-                update(getNodeById(Integer.parseInt(input[1])), getNodeById(Integer.parseInt(input[2])), Integer.parseInt(input[3]));
+                if(id == Integer.parseInt(input[1])) {
+                    update(getNodeById(Integer.parseInt(input[2])), Integer.parseInt(input[3]));
+                }else if(id == Integer.parseInt(input[2])) {
+                    update(getNodeById(Integer.parseInt(input[1])), Integer.parseInt(input[3]));
+                }
+                else{
+                    System.out.println("<update> Error: None of these servers are your server");
+                }
                 return "updating SUCCESS";
             case "step":
                 step(Integer.parseInt(input[4]));
@@ -173,37 +180,21 @@ public class Server{
 		return null;
 	}
 
-    public static void update(Node server1, Node server2, int cost)
+    public static void update(Node neigborNode, int cost)
     {
 
         try{
-            if(server1.getServerID() == Server.id) {
-                Node neigborNode = server2;
-                if(isSeverNeighbor(neigborNode)){
-                    routingTable.put(neigborNode, cost);
-                    message.updateLinkCost(server2, cost);
-                }
-                else{
-                    System.out.println("<update> Error: " + neigborNode.getServerID() + " isn't your neigbor");
-                }
-            }else if(server2.getServerID() == Server.id) {
-                Node neigborNode = server1;
-                if(isSeverNeighbor(neigborNode)){
-                    routingTable.put(neigborNode, cost);
-                    message.updateLinkCost(server1, cost);
-                }
-                else{
-                    System.out.println("<update> Error: " + neigborNode.getServerID() + " isn't your neigbor");
-                }
+            System.out.println("run");
+            if(isSeverNeighbor(neigborNode)){
+                routingTable.replace(neigborNode, routingTable.get(neigborNode), cost);
+                message.updateLinkCost(neigborNode, cost);
+                System.out.println("RECEIVED A MESSAGE FROM SERVER " + neigborNode.getServerID());
             }
             else{
-                System.out.println("<update> Error: Non of these server is your server");
+                System.out.println("<update> Error: Server " + neigborNode.getServerID() + " isn't your neigbor");
             }
-
-            System.out.println("RECEIVED A MESSAGE FROM SERVER <server-ID>");
-
         }catch(Exception e){
-            System.out.println("<update> Error: server [id] does not exist");
+            System.out.println("<update> Error: server "+ neigborNode.getServerID() +" does not exist");
         }
     }
 
