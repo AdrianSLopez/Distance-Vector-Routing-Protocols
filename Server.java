@@ -12,6 +12,7 @@ public class Server{
     private static Map<Node, Integer> routingTable = new HashMap<>();
     private static Set<Node> neighbors = new HashSet<Node>();
     public static Map<Node,Node> nextHop = new HashMap<Node, Node>();
+    public static MessageFormat message = new MessageFormat();
     public static int packets;
     static int id;
 
@@ -89,10 +90,11 @@ public class Server{
                     // for every server inputted in .txt file create node object
                     // connect to each server?? I think
                 return "";
-            case "update":
+            case "update": //update <server-id1> <server-id2> <Cost>
+                update(getNodeById(Integer.parseInt(input[1])), getNodeById(Integer.parseInt(input[2])), Integer.parseInt(input[3]));
                 return "updating SUCCESS";
             case "step":
-            step(Integer.parseInt(input[4]));
+                step(Integer.parseInt(input[4]));
                 return "stepping SUCCESS";
             case "packets":
                 return "Packets: "+packets;
@@ -171,10 +173,32 @@ public class Server{
 		return null;
 	}
 
-    public static void update()
+    public static void update(Node server1, Node server2, int cost)
     {
-        
+
         try{
+            if(server1.getServerID() == Server.id) {
+                Node neigborNode = server2;
+                if(isSeverNeighbor(neigborNode)){
+                    routingTable.put(neigborNode, cost);
+                    message.updateLinkCost(server2, cost);
+                }
+                else{
+                    System.out.println("<update> Error: " + neigborNode.getServerID() + " isn't your neigbor");
+                }
+            }else if(server2.getServerID() == Server.id) {
+                Node neigborNode = server1;
+                if(isSeverNeighbor(neigborNode)){
+                    routingTable.put(neigborNode, cost);
+                    message.updateLinkCost(server1, cost);
+                }
+                else{
+                    System.out.println("<update> Error: " + neigborNode.getServerID() + " isn't your neigbor");
+                }
+            }
+            else{
+                System.out.println("<update> Error: Non of these server is your server");
+            }
 
             System.out.println("RECEIVED A MESSAGE FROM SERVER <server-ID>");
 
@@ -182,6 +206,14 @@ public class Server{
             System.out.println("<update> Error: server [id] does not exist");
         }
     }
+
+    public static boolean isSeverNeighbor(Node server){
+        if (neighbors.contains(server)){
+            return true;
+        }
+        return false;
+    }
+
     public static void step(int interval)
     {
         try{
