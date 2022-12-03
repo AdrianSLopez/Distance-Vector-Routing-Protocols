@@ -12,11 +12,8 @@ public class Server{
     private static Map<Node, Integer> routingTable = new HashMap<>();
     private static Set<Node> neighbors = new HashSet<Node>();
     public static Map<Node,Node> nextHop = new HashMap<Node, Node>();
-<<<<<<< Updated upstream
-=======
     public static MessageFormat message = new MessageFormat();
     public static int packets;
->>>>>>> Stashed changes
     static int id;
 
     public static void main(String[] args) {
