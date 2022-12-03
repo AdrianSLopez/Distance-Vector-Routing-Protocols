@@ -2,7 +2,7 @@ import java.io.BufferedReader;
 import java.io.*;
 import java.net.*;
 
-public class Node extends Thread{
+public class Node extends Thread implements Comparable<Node>{
     private Socket conn;
     private BufferedReader msgReceiver;
     private PrintWriter msgSender;
@@ -94,6 +94,18 @@ public class Node extends Thread{
     public Socket getConnection(){
         return this.conn;
     }
+    @Override
+    public int compareTo(Node n1){
+        if(this.id > n1.id){
+            return 1;
+        }
+        else if(this.id < n1.id){
+            return -1;
+        }else{
+            return 0;
+        }   
+    }
+
 }
 
 
