@@ -54,7 +54,7 @@ public class Node extends Thread implements Comparable<Node>{
                             System.out.println(msgReceived);
                             msgReceived = msgReceiver.readLine();
                         }
-                        System.out.println(Constants.VAGUE_OUT_OF_SERVICE); // Not sure if this part of the code is reachable
+                        System.out.println(Constants.VAGUE_OUT_OF_SERVICE); 
                         System.exit(0);
                         msgSender.close();
                         msgReceiver.close();
