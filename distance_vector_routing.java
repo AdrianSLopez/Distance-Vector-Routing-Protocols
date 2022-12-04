@@ -75,6 +75,7 @@ public class distance_vector_routing{
             });
             incomingConn.start(); 
 
+            //handle incoming packets
             Thread receivePackets = new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -86,11 +87,11 @@ public class distance_vector_routing{
                             packets++;
                             bi = new ByteArrayInputStream(packetHolder.getData());
                             oi = new ObjectInputStream(bi);
-                            messageReceived = (MessageFormat) oi.readObject(); //Object
+                            messageReceived = (MessageFormat) oi.readObject();
                             oi.close();
                             bi.close();
                             updateRoutingTable();
-                            System.out.println(messageReceived);
+                            System.out.println(Constants.GREEN + "RECEIVED A MESSAGE FROM SERVER " + getNodebyIPandPort(messageReceived.getIpAddress(), messageReceived.getPort()).getServerID() + " WITH " + messageReceived.getServerUpdates().size() + " UPDATE(S)." + Constants.RESET);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -111,34 +112,52 @@ public class distance_vector_routing{
             case "help": 
                return (!startupCmdEntered)? Constants.HELP_1: Constants.HELP_2;
             case "server":
-                startupCmdEntered = true;
-                readTopology(input[2]);
-                timerInterval = (Integer.parseInt(input[4]) * 1000);
-                beginRoutingPacketSending();
+                try {
+                    timerInterval = (Integer.parseInt(input[4]) * 1000);
+                    readTopology(input[2]);                   
+                    beginRoutingPacketSending(); 
+                }catch(ArrayIndexOutOfBoundsException e) {
+                    invalidUserInputCount++;
+                    return (invalidUserInputCount%4== 0)? Constants.SERVER_FAILURE + " " + Constants.HELP_NOTIFICATION:Constants.SERVER_FAILURE;
+                } catch(NumberFormatException e) {
+                    invalidUserInputCount++;
+                    return (invalidUserInputCount%4== 0)? Constants.SERVER_INVALID_TIMEINTERVAL + " " + Constants.HELP_NOTIFICATION:Constants.SERVER_INVALID_TIMEINTERVAL;
+                }
+                
                 return "";
             case "update": //update <server-id1> <server-id2> <Cost>
-                if(id == Integer.parseInt(input[1])) {
-                    update(getNodeById(Integer.parseInt(input[2])), Integer.parseInt(input[3]));
-                }else if(id == Integer.parseInt(input[2])) {
-                    update(getNodeById(Integer.parseInt(input[1])), Integer.parseInt(input[3]));
+                try{
+                    if(id == Integer.parseInt(input[1])) {
+                        return update(getNodeById(Integer.parseInt(input[2])), Integer.parseInt(input[3]));
+                    }else if(id == Integer.parseInt(input[2])) {
+                        return update(getNodeById(Integer.parseInt(input[1])), Integer.parseInt(input[3]));
+                    }
+                    else{
+                        return Constants.RED + "<update> Neither server id " + input[1] + " or " + input[2] + " is your server id" + Constants.RESET;
+                    }    
+                }catch(ArrayIndexOutOfBoundsException e) {
+                    return Constants.UPDATE_FAILURE;
+                }catch(NumberFormatException e) {
+                    return Constants.UPDATE_FAILURE_2;
                 }
-                else{
-                    System.out.println("<update> Error: None of these servers are your server");
-                }
-                return "updating SUCCESS";
+                
             case "step":
-                sendPacket();
-                return "Routing Update Success";
+                return sendPacket();
             case "packets":
                 return Constants.GREEN + packets + " packet(s) received." + Constants.RESET;
             case "display":
-                display();
-                return Constants.GREEN + "\n<display> SUCCESS" + Constants.RESET;
+                return display();
             case "disable":
-                return disable(Integer.parseInt(input[1]));
+                try{
+                    return disable(Integer.parseInt(input[1]));    
+                }catch(ArrayIndexOutOfBoundsException e) {
+                    return Constants.DISABLE_FAILURE_3;
+                }catch(NumberFormatException e) {
+                    return Constants.DISABLE_FAILURE_5;
+                }               
             case "crash":
                 crash();
-                return "crash SUCCESS";
+                return Constants.CRASH_SUCCESS;
             default:
                 invalidUserInputCount++;
 
@@ -193,10 +212,13 @@ public class distance_vector_routing{
                     continue;
                 }
             }
-
+            startupCmdEntered = true;
             fs.close();
-        } catch (Exception e) {
-            System.out.println(Constants.VAUGE_ERROR);
+        } catch(FileNotFoundException e) {
+            System.out.println(Constants.SERVER_INVALID_FILE);
+        } catch(ConnectException e) {
+            System.out.println(Constants.SERVER_OFFLINE);
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
@@ -219,19 +241,18 @@ public class distance_vector_routing{
         return null;
     }
 
-    public static void update(Node neigborNode, int cost)
-    {
-
+    public static String update(Node neigborNode, int cost) {
         try{
             if(isSeverNeighbor(neigborNode)){
                 routingTable.replace(neigborNode, routingTable.get(neigborNode), cost);
                 message.updateLinkCost(neigborNode, cost);
+                return Constants.UPDATE_SUCCESS;
             }
             else{
-                System.out.println("<update> Error: Server " + neigborNode.getServerID() + " isn't your neigbor");
+                return Constants.RED + "<update> Server " + neigborNode.getServerID() + " isn't your neigbor." + Constants.RESET;
             }
-        }catch(Exception e){
-            System.out.println("<update> Error: server "+ neigborNode.getServerID() +" does not exist");
+        }catch(NullPointerException e){
+            return Constants.RED + "<update> invalid server id." + Constants.RESET;
         }
     }
 
@@ -250,8 +271,7 @@ public class distance_vector_routing{
             System.out.println("<packets> Error....");
         }
     }
-    public static void display()
-    {
+    public static String display() {
         try{
             ArrayList<Node> tableSorted = new ArrayList<Node>(routingTable.keySet());
             Collections.sort(tableSorted);
@@ -261,24 +281,25 @@ public class distance_vector_routing{
             fm1.format("%30s", "______________________________________________________________\n");
             for(Node n : tableSorted){
                 cost = routingTable.get(n);
-                fm1.format("%10s %20s %21s", "<" + id + ">", "<" + n.getServerID() + ">", "<" + ((cost == -1)? "infin":cost) + ">");
+                fm1.format("%10s %20s %21s", "<" + id + ">", "<" + n.getServerID() + ">", "<" + ((cost == -1)? "infin":cost) + ">\n");
             }
             System.out.println(fm1);
+            return Constants.DISPLAY_SUCCESS;
         }catch(Exception e){
-            System.out.println("<display> Error: Could not display all values.");
-            System.out.println(e);
+            return Constants.DISPLAY_FAILURE;
         }
     }
     public static String disable(int id)
     {
         String result = "";
         try{
+            Node rip = getNodeById(id);
 
-            if (neighbors.contains(getNodeById(id))){
-                getNodeById(id).getConnection().close();
+            if (neighbors.contains(rip)){
                 for(int i = 0; i < connectionToServers.size(); i++){
                     if(connectionToServers.get(i).getServerID() == id){
                         connectionToServers.get(i).getConnection().close();
+                        connectedToUs.remove(i);
                     }    
                 }   
                 for(Map.Entry<Node, Integer> entry: routingTable.entrySet()){
@@ -290,17 +311,21 @@ public class distance_vector_routing{
                 for(Node entry: neighbors){
                     if(entry.getServerID() == id){
                         entry.getConnection().close();
+                        neighbors.remove(rip);
                     }
-                 }
-                result = "<disable> SUCCESS";       
+                }
+                rip.getConnection().close();
+                result = Constants.DISABLE_SUCCESS;       
             } else{
-                result = "<disable> Cannot disable " + id;
+                if((distance_vector_routing.id == id))  result = Constants.DISABLE_FAILURE_4;
+                if(getNodeById(id) == null) result = Constants.RED + "<disable> no server with id " + id + "." + Constants.RESET;
+                if(getNodeById(id) != null) result = Constants.RED + "<disable> server " + id + " is not your neigbor." + Constants.RESET;
             }
         }catch(ConcurrentModificationException e){
-            System.out.println("Socket closed.");
+            result = Constants.DISABLE_FAILURE_1;
         }
         catch(IOException e){
-            System.out.println("Invalid.");
+            result = Constants.DISABLE_FAILURE_2;
         }
         return result;
     }
@@ -317,8 +342,10 @@ public class distance_vector_routing{
                entry.getConnection().close();
             }
             for(Map.Entry<Node, Integer> entry: routingTable.entrySet()){
-                routingTable.replace(entry.getKey(), entry.getValue(),null); 
+                routingTable.replace(entry.getKey(), entry.getValue(),-1); 
             }
+
+            System.out.println(Constants.CRASH_MESSAGE);
         }catch(ConcurrentModificationException e){
             System.out.println("<disable> Error: Socket Closed");
         }
@@ -344,25 +371,30 @@ public class distance_vector_routing{
         });
         periodicUpdate.start();
     }
-    private static void sendPacket() {
+    private static String sendPacket() {
+        if(neighbors.size() == 0) return Constants.STEP_NO_NEIGHBORS;
         try {
-            DatagramSocket socket = new DatagramSocket();
+            DatagramSocket socket;
+            DatagramPacket packet;
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(message);
             oos.flush();
             byte [] data = bos.toByteArray();
-            DatagramPacket packet = new DatagramPacket(data, data.length);
-
+            
             for(Node n: neighbors) {
+                socket = new DatagramSocket();
+                packet = new DatagramPacket(data, data.length);
                 socket.connect(InetAddress.getByName("localhost"), n.getServerPort());
                 socket.send(packet);
+                socket.close();
             }
             message.setServerUpdates(new ArrayList<String>());
             message.setnumFields();
-            socket.close();
+            return Constants.STEP_SUCCESS;
         }catch(Exception e) {
             e.printStackTrace();
+            return Constants.STEP_FAILURE;
         }        
     }
     private static void updateRoutingTable() {
