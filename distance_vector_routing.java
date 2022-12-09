@@ -218,7 +218,10 @@ public class distance_vector_routing{
             System.out.println(Constants.SERVER_INVALID_FILE);
         } catch(ConnectException e) {
             System.out.println(Constants.SERVER_OFFLINE);
-        } catch(Exception e) {
+        } catch(InputMismatchException e) {
+            System.out.println(Constants.SERVER_OFFLINE);
+        }
+        catch(Exception e) {
             e.printStackTrace();
         }
     }
