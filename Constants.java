@@ -77,10 +77,10 @@ public final class Constants {
 
     public static final String INTRO_MSG = "\t\t\tWELCOME TO\n" + SERVER_TITLE + "  " + HELP_NOTIFICATION;
     public static final String HELP_1 =
-                  "\n Command       " +
+                  "\n Command    Description     " +
                   "\n========================================================================================================" +
                   "\n " + SERVER + " -t " + SERVER_PARAM_1 + " -i " + SERVER_PARAM_2 + 
-                  "\n           " + SERVER_PARAM_1 + "             File contains the initial topology configuration for the server." +
+                  "\n\n           " + SERVER_PARAM_1 + "             File contains the initial topology configuration for the server." +
                   "\n           " + SERVER_PARAM_2 + "  Time interval integer between routing updates in seconds.\n";
     public static final String HELP_2 = 
                 "\n Commands \t\t\t\t\t     Description\n" +
