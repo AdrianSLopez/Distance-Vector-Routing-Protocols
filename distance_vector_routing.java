@@ -118,10 +118,10 @@ public class distance_vector_routing{
                     beginRoutingPacketSending(); 
                 }catch(ArrayIndexOutOfBoundsException e) {
                     invalidUserInputCount++;
-                    return (invalidUserInputCount%4== 0)? Constants.SERVER_FAILURE + " " + Constants.HELP_NOTIFICATION:Constants.SERVER_FAILURE;
+                    return (invalidUserInputCount%4== 0)? Constants.SERVER_FAILURE + " " + Constants.HELP_NOTIFICATION+"\n":Constants.SERVER_FAILURE+"\n";
                 } catch(NumberFormatException e) {
                     invalidUserInputCount++;
-                    return (invalidUserInputCount%4== 0)? Constants.SERVER_INVALID_TIMEINTERVAL + " " + Constants.HELP_NOTIFICATION:Constants.SERVER_INVALID_TIMEINTERVAL;
+                    return (invalidUserInputCount%4== 0)? Constants.SERVER_INVALID_TIMEINTERVAL + " " + Constants.HELP_NOTIFICATION+"\n":Constants.SERVER_INVALID_TIMEINTERVAL+"\n";
                 }
                 
                 return "";
