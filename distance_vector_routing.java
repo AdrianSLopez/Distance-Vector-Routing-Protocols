@@ -17,7 +17,7 @@ public class distance_vector_routing{
     private static int timerInterval;
     private static int id;
     public static int packets;
-    
+
     public static void main(String[] args) {
         try {
             serverSocket = new ServerSocket(Constants.PORT);
@@ -297,7 +297,6 @@ public class distance_vector_routing{
         String result = "";
         try{
             Node rip = getNodeById(id);
-
             if (neighbors.contains(rip)){
                 for(int i = 0; i < connectionToServers.size(); i++){
                     if(connectionToServers.get(i).getServerID() == id){
@@ -307,7 +306,6 @@ public class distance_vector_routing{
                 }   
                 for(Map.Entry<Node, Integer> entry: routingTable.entrySet()){
                     if(entry.getKey().getServerID() == id){
-                        entry.getKey().getConnection().close();
                         routingTable.remove(entry.getKey());
                     }
                 }
@@ -317,7 +315,6 @@ public class distance_vector_routing{
                         neighbors.remove(rip);
                     }
                 }
-                rip.getConnection().close();
                 result = Constants.DISABLE_SUCCESS;       
             } else{
                 if((distance_vector_routing.id == id))  result = Constants.DISABLE_FAILURE_4;
