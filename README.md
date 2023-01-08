@@ -14,13 +14,10 @@ After changes run Server.java
 <html>
   
 <head>
-    <title>PDF in HTML</title>
 </head>
   
 <body>
     <center>
-        <h1 style="color: green">GeeksforGeeks</h1>
-        <h3>Embedding the PDF file Using Object Tag</h3>
         <object data=
 "https://github.com/AdrianSLopez/Distance-Vector-Routing-Protocols/blob/main/Project%202%20ReadMe-3.pdf" 
                 width="800" 
