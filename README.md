@@ -10,4 +10,4 @@ the only data is accepted currently in the topology file:
 
 After changes run Server.java
 
-![](/Project 2 ReadMe-3.pdf)
+![](Project 2 ReadMe-3.pdf)
