@@ -16,7 +16,6 @@
                     To create another server just input a different port number in <a style="text-decoration:none;"  href="https://github.com/AdrianSLopez/Distance-Vector-Routing-Protocols/blob/main/Constants.java"><b>Constants.java</b></a>, if planning to create on the same computer.
                 </li>
             </ul>
-
         <li>Edit <a style="text-decoration:none;"  href="https://github.com/AdrianSLopez/Distance-Vector-Routing-Protocols/blob/main/topology.txt"><b>topology.txt</b></a> with the following format:</li>
             <ul>
                 <li># of servers</li>
