@@ -3,7 +3,7 @@ public final class Constants {
     }
 
     // SERVER INFO
-    public static final String IP = "192.168.1.189"; //Add your ip
+    public static final String IP = "XXX.XXX.XXX"; //Add your ip
     public static final int PORT = 2003;             // Add PORT
 
     // COLOR
