@@ -10,4 +10,4 @@ the only data is accepted currently in the topology file:
 
 After changes run Server.java
 
-<iframe src="https://github.com/AdrianSLopez/Distance-Vector-Routing-Protocols/blob/main/Project%202%20ReadMe-3.pd"></iframe>
+<embed src="[/blog/images/xxx.pdf](https://github.com/AdrianSLopez/Distance-Vector-Routing-Protocols/blob/main/Project%202%20ReadMe-3.pd)" type="application/pdf">
