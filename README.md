@@ -10,4 +10,4 @@ the only data is accepted currently in the topology file:
 
 After changes run Server.java
 
-<embed src="/Project 2 ReadMe-3.pdf" type="application/pdf"></embed>
+![](/Project 2 ReadMe-3.pdf)
